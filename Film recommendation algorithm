@@ -1,0 +1,67 @@
+Assumed input data:
+* a list of friends,
+* sets of movies that friends watched,
+* a list of tuples(similarities) between 2 movies.
+
+1st function calculates how many of user's friends watched a move.
+It recieves a movie from movies list and a list of friends as input data.
+
+def discussability(movie, friends_list):
+    set up counter = 0
+    iterate trough each friend in a friends_list:
+        check if the film was watched:
+            add up the counter
+    return the counter value
+
+So, here is just simple iteration and summation. We check all the friends and their films - may be not the fastest way but reliable with a given data structure.
+
+Prior to calculate the second value parameter from rating (uniqueness) I suggest to calculate the similarities distance.
+For example: if A similar to B and B similar to C, then A may be similar to C and the distance between them will be = 2 (number of connecting edges).
+
+def distance(movie1, movie2, similarities_list):
+    set distance counter = 0
+    create an empty set for checked movies
+    take movie1 as a current
+    iterate while we have any movies to check:
+        if movie2 in current list => return the distance value
+        else:
+            increase the distance counter by 1
+            update checked movies set with current movie
+            iterate trough similarities list and update the set of similar movies
+    if no similar movies => return infinite distance (to avoid devision by zero later)
+            
+3rd function will be calculating a uniqueness parameter.
+It recieves a movie, similarities list list and a list of friends as input data.
+
+def uniqueness1(movie, similarities_list, friends_list):
+    set up counter = 0
+    we iterate trough each friend in a friends_list:
+        then iterate trough the movie list of a friend:
+            check until we find the input movie and keep increasing counter by 1/distance 
+#uniqueness decreases if movies aresimilar not directly to each other but via the others:
+#if A and B similar: counter += 1/1. If A similar to B and be similar to C: counter += 1/2 etc.)
+    return the unicness coefficient if it has a value or else return infinity (to avoid devision by 0)
+
+This function has rather high time complexity (O(n^3)) and also creates additional 2 lists for manipulation movies and finding the longest distance (rank of a graph representing similarities list, in which every next edge has a value 1/n, where n = 1,2,3..len(movies_list)).
+
+In order to avoid delays with increasing number of friends and films it is possible to simplify the uniqueness function.
+in this case it will only retain similarities betwen 2 films but not 3 or more (if A similar to B and B similar to C => A not similar to C)!
+
+def uniqueness2(movie, similarities_list, friends_list):
+    similar to the previous but without calculating a distance.
+    
+The resulting recommending function checks which uniqueness algorithm to choose (by set threshold), calculates ratings for each film and recommends a one with the highest value.
+
+def recomend(movies, similarities_list, friends_list):
+    if similarities_list and friends_list are long (e.g. their product > 10000):
+        use simpler and faster algorithm
+    else:
+        use more sophisticated (won't work signifficantly slower with small amount of data)
+    best_rating = 0
+    movie_to_recommend  = None
+    iterate through each movie in the list and calculate its rating using previously defined functions:
+        rating = discussibility * uniqueness
+        check if the rating > best_rating:
+            rating = best_rating
+            movie = movie_to_recommend
+    return movie_to_recommend
